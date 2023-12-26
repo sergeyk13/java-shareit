@@ -17,7 +17,7 @@ public interface ItemService {
 
     ItemDto updateItem(long userId, long itemId, Item item);
 
-    Item prepaireUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest);
+    Item prepareUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest);
 
     void removeItem(long userId, long itemId);
 

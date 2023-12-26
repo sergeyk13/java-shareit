@@ -15,31 +15,31 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    private UserRepository userRepository;
-    private ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     public ItemDto itemCreate(long userId, ItemDto itemDto) {
         log.info("Create Item: {}", itemDto);
-        userRepository.findOne(userId);
-        return itemRepository.addItem(itemDto, userId);
+        userRepository.getUser(userId);
+        return itemRepository.itemCreate(itemDto, userId);
     }
 
     @Override
     public ItemDto getItem(long userId, long itemId) {
-        userRepository.findOne(userId);
+        userRepository.getUser(userId);
         log.info("get Item by Id: {}", itemId);
-        return itemRepository.findItem(itemId);
+        return itemRepository.getItem(itemId);
     }
 
     @Override
     public List<ItemDto> getAll() {
-        return itemRepository.findAll();
+        return itemRepository.getAll();
     }
 
     @Override
     public List<ItemDto> getAllByUserId(long userId) {
-        userRepository.findOne(userId);
+        userRepository.getUser(userId);
         log.info("Get all items by user: {}", userId);
         return itemRepository.findItemByOwnerId(userId);
     }
@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public void removeItem(long userId, long itemId) {
-        userRepository.findOne(userId);
+        userRepository.getUser(userId);
         log.info("remove Item: {}", itemId);
         itemRepository.removeItem(itemId);
     }
@@ -67,8 +67,8 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    public Item prepaireUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
+    public Item prepareUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
         log.info("Preparing Item: {}", itemId);
-        return itemRepository.updatingItem(userId, itemId, itemUpdatingRequest);
+        return itemRepository.updateItem(userId, itemId, itemUpdatingRequest);
     }
 }

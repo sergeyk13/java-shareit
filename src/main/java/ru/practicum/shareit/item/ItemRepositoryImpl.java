@@ -5,26 +5,28 @@ import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.error.model.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 
 import java.util.*;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
-    private HashMap<Long, Item> items = new HashMap<>();
+    private final HashMap<Long, Item> items = new HashMap<>();
+
     private long id = 1;
 
     @Override
-    public ItemDto addItem(ItemDto itemDto, long userId) {
-        Item item = createItem(itemDto, userId);
+    public ItemDto itemCreate(ItemDto itemDto, long userId) {
+        Item item = ItemMapper.createItem(itemDto, userId, getId());
         items.put(item.getId(), item);
-        return itemToItemDto(items.get(item.getId()));
+        return ItemMapper.itemToItemDto(items.get(item.getId()));
     }
 
     @Override
-    public ItemDto findItem(long itemId) {
+    public ItemDto getItem(long itemId) {
         isItemExist(itemId);
-        return itemToItemDto(items.get(itemId));
+        return ItemMapper.itemToItemDto(items.get(itemId));
     }
 
     @Override
@@ -32,7 +34,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         List<ItemDto> itemList = new ArrayList<>();
         items.forEach((key, value) -> {
             if (value.getOwnerId() == userId) {
-                itemList.add(itemToItemDto(value));
+                itemList.add(ItemMapper.itemToItemDto(value));
             }
         });
         return Collections.unmodifiableList(itemList);
@@ -40,20 +42,20 @@ public class ItemRepositoryImpl implements ItemRepository {
 
 
     @Override
-    public List<ItemDto> findAll() {
+    public List<ItemDto> getAll() {
         List<ItemDto> itemList = new ArrayList<>();
-        items.forEach((key, value) -> itemList.add(itemToItemDto(value)));
+        items.forEach((key, value) -> itemList.add(ItemMapper.itemToItemDto(value)));
         return Collections.unmodifiableList(itemList);
     }
 
     @Override
     public ItemDto addUpdatingItem(long itemId, Item item) {
         items.put(itemId, item);
-        return itemToItemDto(items.get(item.getId()));
+        return ItemMapper.itemToItemDto(items.get(item.getId()));
     }
 
     @Override
-    public Item updatingItem(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
+    public Item updateItem(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
         isItemExist(itemId);
         checkOwner(userId, itemId);
         Item item = items.get(itemId);
@@ -93,15 +95,11 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         items.forEach((key, value) -> {
             if (value.getAvailable() && (value.getName().toLowerCase().contains(searchTextLower) || value.getDescription().toLowerCase().contains(searchTextLower))) {
-                itemList.add(itemToItemDto(value));
+                itemList.add(ItemMapper.itemToItemDto(value));
             }
         });
 
         return Collections.unmodifiableList(itemList);
-    }
-
-    private Item createItem(ItemDto itemDto, long userId) {
-        return new Item(id++, userId, itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable());
     }
 
     private void isItemExist(long itemId) {
@@ -117,7 +115,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         }
     }
 
-    private ItemDto itemToItemDto(Item item) {
-        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable());
+    private long getId() {
+        return this.id++;
     }
 }

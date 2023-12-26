@@ -13,12 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private UserRepository repository;
+    private final UserRepository repository;
 
     @Override
     public User userCreate(User user) {
         log.info("Create user: {}, {}", user.getName(), user.getName());
-        return repository.add(user);
+        return repository.userCreate(user);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(long userId) {
         log.info("Return user: {}", userId);
-        return repository.findOne(userId);
+        return repository.getUser(userId);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         log.info("Update user: {}", userId);
-        return repository.updatingUser(userId, userUpdateRequest);
+        return repository.updateUser(userId, userUpdateRequest);
     }
 
     @Override

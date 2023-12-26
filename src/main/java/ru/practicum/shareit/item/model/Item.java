@@ -19,6 +19,7 @@ public class Item {
     private long ownerId;
     @NotBlank
     private String name;
+    @NotBlank
     @Size(max = 200)
     private String description;
     @NotNull

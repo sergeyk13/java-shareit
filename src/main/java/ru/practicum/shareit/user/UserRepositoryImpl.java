@@ -15,7 +15,7 @@ public class UserRepositoryImpl implements UserRepository {
     private long id = 1;
 
     @Override
-    public User findOne(Long userId) {
+    public User getUser(Long userId) {
         isUserExist(userId);
         return users.get(userId);
     }
@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User add(User user) {
+    public User userCreate(User user) {
         if (isNotConflictEmail(user.getEmail())) {
             User newUser = createUser(user);
             users.put(newUser.getId(), newUser);
@@ -43,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User updatingUser(long userId, UserUpdateRequest userUpdateRequest) {
+    public User updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         isUserExist(userId);
         User updateUser = users.get(userId);
         Optional<String> name = Optional.ofNullable(userUpdateRequest.getName());
