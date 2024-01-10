@@ -18,7 +18,9 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public ItemDto itemCreate(ItemDto itemDto, long userId) {
-        Item item = ItemMapper.createItem(itemDto, userId, getId());
+        Item item = ItemMapper.itemDtoToItem(itemDto);
+        item.setOwnerId(userId);
+        item.setId(getId());
         items.put(item.getId(), item);
         return ItemMapper.itemToItemDto(items.get(item.getId()));
     }
