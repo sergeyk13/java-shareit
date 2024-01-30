@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.model;
 
-import jdk.jfr.BooleanFlag;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +14,6 @@ public class ItemUpdatingRequest {
     private String name;
     @NotBlank
     private String description;
-    @BooleanFlag
+    @NotNull
     private Boolean available;
 }

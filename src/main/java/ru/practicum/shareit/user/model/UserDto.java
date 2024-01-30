@@ -4,26 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto implements Serializable {
+    @NotBlank
     private long id;
     @NotBlank
-    @Column(nullable = false)
     private String name;
-    @NotEmpty
+    @NotBlank
     @Email
-    @Column(nullable = false)
     private String email;
 }

@@ -2,14 +2,15 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.practicum.shareit.booking.dto.BookingDtoByItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ItemDto implements Serializable {
+public class ItemResponseDto {
     private long id;
     @NotBlank
     private String name;
@@ -17,8 +18,7 @@ public class ItemDto implements Serializable {
     private String description;
     @NotNull
     private Boolean available;
-
-    public boolean getAvailable() {
-        return this.available;
-    }
+    private BookingDtoByItem lastBooking;
+    private BookingDtoByItem nextBooking;
+    private List<CommentDtoResponse> comments;
 }
