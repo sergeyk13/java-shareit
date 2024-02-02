@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDto {
-    @NotNull
+
     @Min(1)
     private long itemId;
     @NotNull

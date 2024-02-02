@@ -15,7 +15,7 @@ public class CommentDtoResponse {
     @NotBlank
     @Size(max = 200)
     private String text;
-    @NotNull
+    @NotBlank
     private String authorName;
     @FutureOrPresent
     private LocalDateTime created;

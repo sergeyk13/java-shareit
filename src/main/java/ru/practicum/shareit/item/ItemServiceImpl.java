@@ -86,6 +86,7 @@ public class ItemServiceImpl implements ItemService {
 
     }
 
+    @Transactional
     @Override
     public void removeItem(long userId, long itemId) {
         if (!checkOwner(userId, itemId)) {
@@ -145,7 +146,7 @@ public class ItemServiceImpl implements ItemService {
 
             if (checkOwner(userId, itemId)) {
 
-                List<Booking> bookings = bookingRepository.findBookingsByItem_IdOrderByStart(itemId);
+                List<Booking> bookings = bookingRepository.findBookingsByItemIdOrderByStart(itemId);
 
                 lastBooking = bookings.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
@@ -174,9 +175,10 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, @Valid CommentDto text) {
-        Set<Booking> bookingSet = bookingRepository.findBookingsByBooker_IdAndItem_Id(userId, itemId);
+        Set<Booking> bookingSet = bookingRepository.findBookingsByBookerIdAndItem_Id(userId, itemId);
         Set<Booking> filteredBooking = bookingSet.stream()
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toSet());

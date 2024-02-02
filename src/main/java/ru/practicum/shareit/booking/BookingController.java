@@ -12,9 +12,6 @@ import java.util.LinkedHashSet;
 
 import static ru.practicum.shareit.constants.HeaderConstants.X_SHARER_USER_ID;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
@@ -53,7 +50,7 @@ public class BookingController {
     @GetMapping("/owner")
     public ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingForOwnerByState(
             @RequestHeader(X_SHARER_USER_ID) long userId,
-            @RequestParam(required = false, defaultValue = "ALL") BookingState state) {
+            @RequestParam(name = "state", defaultValue = "ALL") BookingState state) {
         return service.getBookingForOwnerByState(userId, state);
     }
 }

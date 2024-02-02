@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
@@ -40,21 +42,31 @@ public class BookingServiceImpl implements BookingService {
 
         if (optionalUser.isPresent()) {
             booking.setBooker(optionalUser.get());
-        } else throw new NotFoundException(String.format("User ID:%d not found", userId));
-
+        } else {
+            log.error("User ID:{} not found", userId);
+            throw new NotFoundException(String.format("User ID:%d not found", userId));
+        }
 
         if (optionalItem.isPresent()) {
             booking.setItem(optionalItem.get());
             if (booking.getItem().getOwnerId() == userId) {
+                log.error("Booker is owner");
                 throw new NotFoundException("Booker is owner");
             }
-        } else throw new NotFoundException(String.format("Item ID:%d not found", bookingDto.getItemId()));
+        } else {
+            log.error("Item ID:{} not found", bookingDto.getItemId());
+            throw new NotFoundException(String.format("Item ID:%d not found", bookingDto.getItemId()));
+        }
 
         if (booking.getItem().getAvailable()) {
             checkValidation(booking);
             booking.setState(calculateState(booking));
             bookingRepository.save(booking);
-        } else throw new ValidationException("Item isn't available");
+            log.info("Save booking: {}", booking);
+        } else {
+            log.error("Item isn't available");
+            throw new ValidationException("Item isn't available");
+        }
 
         return new ResponseEntity<>(BookingMapper.INSTANCE.modelToResponse(booking),
                 HttpStatus.OK);
@@ -71,19 +83,29 @@ public class BookingServiceImpl implements BookingService {
                         booking.get().setStatus(BookingState.APPROVED);
                         booking.get().setState(calculateState(booking.get()));
                         bookingRepository.save(booking.get());
-                    } else throw new ValidationException("Status is already APPROVED");
+                        log.info("Set approve");
+                    } else {
+                        log.error("Status is already APPROVED");
+                        throw new ValidationException("Status is already APPROVED");
+                    }
                 } else {
                     booking.get().setStatus(BookingState.REJECTED);
                     bookingRepository.save(booking.get());
                 }
-            } else throw new NotFoundException("User isn't owner");
-        } else throw new NotFoundException(String.format("Booking ID:%d not found", bookingId));
+            } else {
+                log.error("User isn't owner");
+                throw new NotFoundException("User isn't owner");
+            }
+        } else {
+            log.error("Booking ID:{} not found", bookingId);
+            throw new NotFoundException(String.format("Booking ID:%d not found", bookingId));
+        }
 
         return new ResponseEntity<>(BookingMapper.INSTANCE.modelToResponse(booking.get()),
                 HttpStatus.OK);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<BookingDtoResponse> getBookingById(long userId, long bookingId) {
         Optional<Booking> booking = bookingRepository.findById(bookingId);
@@ -91,25 +113,34 @@ public class BookingServiceImpl implements BookingService {
             if ((booking.get().getItem().getOwnerId() == userId) ||
                     (booking.get().getBooker().getId() == userId)) {
                 booking.get().setState(calculateState(booking.get()));
+                log.info("return booking: {}", bookingId);
                 return new ResponseEntity<>(BookingMapper.INSTANCE.modelToResponse(booking.get()),
                         HttpStatus.OK);
-            } else throw new NotFoundException("User isn't owner or booker");
-        } else throw new NotFoundException(String.format("Booking ID:%d not found", bookingId));
+            } else {
+                log.error("User isn't owner or booker");
+                throw new NotFoundException("User isn't owner or booker");
+            }
+        } else {
+            log.error("Booking ID:{} not found", bookingId);
+            throw new NotFoundException(String.format("Booking ID:%d not found", bookingId));
+        }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingByState(long userId, BookingState state) {
         checkUser(userId);
-        Set<Booking> bookings = bookingRepository.findBookingsByBooker_IdOrderByStart(userId);
+        Set<Booking> bookings = bookingRepository.findBookingsByBookerIdOrderByStart(userId);
+        log.info("Return bookings by state: {}", state);
         return getLinkedSetByState(bookings, state);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state) {
         checkUser(userId);
-        Set<Booking> bookings = bookingRepository.findBookingsByItem_OwnerIdOrderByStartDesc(userId);
+        Set<Booking> bookings = bookingRepository.findBookingsByItemOwnerIdOrderByStartDesc(userId);
+        log.info("Return bookings by state: {}", state);
         return getLinkedSetByState(bookings, state);
     }
 

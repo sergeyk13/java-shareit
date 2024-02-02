@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
-    @NotNull
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
