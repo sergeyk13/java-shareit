@@ -10,16 +10,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
 @Entity
 @Table(name = "booking")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Booking {
-    @NotNull
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

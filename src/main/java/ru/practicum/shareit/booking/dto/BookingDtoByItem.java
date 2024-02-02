@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDtoByItem {
-    @NotNull
+
     @Min(1)
     private long id;
     @NotNull

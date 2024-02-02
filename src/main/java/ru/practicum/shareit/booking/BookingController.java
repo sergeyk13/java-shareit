@@ -9,12 +9,10 @@ import ru.practicum.shareit.booking.model.BookingState;
 
 import javax.validation.Valid;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import static ru.practicum.shareit.constants.HeaderConstants.X_SHARER_USER_ID;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @AllArgsConstructor
@@ -44,16 +42,16 @@ public class BookingController {
     }
 
     @GetMapping()
-    public ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingByState(
+    public ResponseEntity<List<BookingDtoResponse>> getBookingByState(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(name = "state", defaultValue = "ALL") BookingState state) {
         return service.getBookingByState(userId, state);
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingForOwnerByState(
+    public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(
             @RequestHeader(X_SHARER_USER_ID) long userId,
-            @RequestParam(required = false, defaultValue = "ALL") BookingState state) {
+            @RequestParam(name = "state", defaultValue = "ALL") BookingState state) {
         return service.getBookingForOwnerByState(userId, state);
     }
 }

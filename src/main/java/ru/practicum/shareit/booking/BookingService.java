@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.BookingState;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public interface BookingService {
     ResponseEntity<BookingDtoResponse> bookingCreate(long userId, BookingDto bookingDto);
@@ -14,7 +15,7 @@ public interface BookingService {
 
     ResponseEntity<BookingDtoResponse> getBookingById(long userId, long bookingId);
 
-    ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingByState(long userId, BookingState state);
+    ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state);
 
-    ResponseEntity<LinkedHashSet<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state);
+    ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state);
 }

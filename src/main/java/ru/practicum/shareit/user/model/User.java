@@ -12,7 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,10 +19,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
-    @Column(nullable = false)
     private String name;
     @NotEmpty
     @Email
-    @Column(nullable = false)
     private String email;
 }

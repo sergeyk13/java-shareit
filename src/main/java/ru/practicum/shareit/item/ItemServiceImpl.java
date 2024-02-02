@@ -22,7 +22,6 @@ import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.mapper.ItemMapperInt;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.model.ItemMapper;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
@@ -48,10 +47,10 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto saveItem(long userId, ItemDto itemDto) {
         if (userRepository.findById(userId).isPresent()) {
             try {
-                Item savedItem = ItemMapper.itemDtoToItem(itemDto, userId);
+                Item savedItem = ItemMapperInt.INSTANCE.DtoToModel(itemDto, userId);
                 log.info("Create Item: {}", savedItem);
                 itemRepository.save(savedItem);
-                return ItemMapper.itemToItemDto(savedItem);
+                return ItemMapperInt.INSTANCE.modelToDto(savedItem);
             } catch (DataIntegrityViolationException e) {
                 log.error("Error save Item: {}, owner id isn't found", itemDto);
                 throw new NotFoundException("Error save Item owner id isn't found");
@@ -63,7 +62,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(long userId, long itemId) {
         log.info("getting Item by Id: {}", itemId);
-        return ItemMapper.itemToItemDto(itemRepository.findById(itemId));
+        Item item = itemRepository.findById(itemId).orElseThrow( () ->
+        new NotFoundException(String.format("Item with Id:%d not found", itemId)));
+        return ItemMapperInt.INSTANCE.modelToDto(item);
     }
 
     @Transactional(readOnly = true)
@@ -81,11 +82,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, long itemId, @Valid Item item) {
         itemRepository.save(item);
-        log.info("Update Item: {}", item);
-        return ItemMapper.itemToItemDto(itemRepository.findById(itemId));
+        return ItemMapperInt.INSTANCE.modelToDto(item);
 
     }
 
+    @Transactional
     @Override
     public void removeItem(long userId, long itemId) {
         if (!checkOwner(userId, itemId)) {
@@ -102,7 +103,7 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         } else {
             log.info("Search items contain: " + searchText);
-            return ItemMapper.itemToItemDtoList(itemRepository.searchItems(searchText.toLowerCase()));
+            return ItemMapperInt.INSTANCE.mapModelListToDtoList(itemRepository.searchItems(searchText.toLowerCase()));
         }
     }
 
@@ -145,7 +146,7 @@ public class ItemServiceImpl implements ItemService {
 
             if (checkOwner(userId, itemId)) {
 
-                List<Booking> bookings = bookingRepository.findBookingsByItem_IdOrderByStart(itemId);
+                List<Booking> bookings = bookingRepository.findBookingsByItemIdOrderByStartDesc(itemId);
 
                 lastBooking = bookings.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
@@ -159,24 +160,25 @@ public class ItemServiceImpl implements ItemService {
                         .min(Comparator.comparing(Booking::getStart))
                         .orElse(null);
 
-                return ItemMapper.mapToItemResponseDto(itemOptional.get(),
+                return ItemMapperInt.INSTANCE.mapToItemResponseDto(itemOptional.get(),
                         BookingMapper.INSTANCE.modelToBookingByItem(lastBooking),
                         BookingMapper.INSTANCE.modelToBookingByItem(nextBooking),
                         comments.stream()
-                                .map(ItemMapperInt.INSTANCE::modelToDto)
+                                .map(ItemMapperInt.INSTANCE::modelCommentToDto)
                                 .collect(Collectors.toList()));
-            } else return ItemMapper.mapToItemResponseDto(itemOptional.get(), null, null,
+            } else return ItemMapperInt.INSTANCE.mapToItemResponseDto(itemOptional.get(), null, null,
                     comments.stream()
-                            .map(ItemMapperInt.INSTANCE::modelToDto)
+                            .map(ItemMapperInt.INSTANCE::modelCommentToDto)
                             .collect(Collectors.toList()));
         } else {
             throw new NotFoundException("Item not found");
         }
     }
 
+    @Transactional
     @Override
     public ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, @Valid CommentDto text) {
-        Set<Booking> bookingSet = bookingRepository.findBookingsByBooker_IdAndItem_Id(userId, itemId);
+        Set<Booking> bookingSet = bookingRepository.findBookingsByBookerIdAndItemId(userId, itemId);
         Set<Booking> filteredBooking = bookingSet.stream()
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toSet());
@@ -202,7 +204,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException(e.getLocalizedMessage());
         }
 
-        return new ResponseEntity<>(ItemMapperInt.INSTANCE.modelToDto(comment),
+        return new ResponseEntity<>(ItemMapperInt.INSTANCE.modelCommentToDto(comment),
                 HttpStatus.OK);
     }
 
