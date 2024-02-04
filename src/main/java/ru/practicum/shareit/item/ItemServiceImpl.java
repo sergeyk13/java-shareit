@@ -62,8 +62,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(long userId, long itemId) {
         log.info("getting Item by Id: {}", itemId);
-        Item item = itemRepository.findById(itemId).orElseThrow( () ->
-        new NotFoundException(String.format("Item with Id:%d not found", itemId)));
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new NotFoundException(String.format("Item with Id:%d not found", itemId)));
         return ItemMapperInt.INSTANCE.modelToDto(item);
     }
 

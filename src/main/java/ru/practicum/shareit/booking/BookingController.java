@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.BookingState;
 
 import javax.validation.Valid;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static ru.practicum.shareit.constants.HeaderConstants.X_SHARER_USER_ID;
