@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto saveItem(long userId, ItemDto itemDto) {
         if (userRepository.findById(userId).isPresent()) {
             try {
-                Item savedItem = ItemMapperInt.INSTANCE.DtoToModel(itemDto, userId);
+                Item savedItem = ItemMapperInt.INSTANCE.dtoToModel(itemDto, userId);
                 log.info("Create Item: {}", savedItem);
                 itemRepository.save(savedItem);
                 return ItemMapperInt.INSTANCE.modelToDto(savedItem);

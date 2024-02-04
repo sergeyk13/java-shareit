@@ -21,7 +21,7 @@ public interface ItemMapperInt {
 
     ItemDto modelToDto(Item item);
 
-    Item DtoToModel(ItemDto itemDto, long ownerId);
+    Item dtoToModel(ItemDto itemDto, long ownerId);
 
     List<ItemDto> mapModelListToDtoList(Iterable<Item> items);
 
