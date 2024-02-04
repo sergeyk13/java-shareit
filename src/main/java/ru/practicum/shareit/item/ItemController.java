@@ -1,8 +1,12 @@
 package ru.practicum.shareit.item;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 
@@ -19,21 +23,11 @@ public class ItemController {
 
     @PostMapping
     public ItemDto itemCreate(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
-        return service.itemCreate(userId, itemDto);
-    }
-
-    @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
-        return service.getItem(userId, itemId);
-    }
-
-    @GetMapping("/all")
-    public List<ItemDto> getAll() {
-        return service.getAll();
+        return service.saveItem(userId, itemDto);
     }
 
     @GetMapping
-    public List<ItemDto> getAllByUserId(@RequestHeader(X_SHARER_USER_ID) long userId) {
+    public List<ItemResponseDto> getAllByUserId(@RequestHeader(X_SHARER_USER_ID) long userId) {
         return service.getAllByUserId(userId);
     }
 
@@ -54,4 +48,15 @@ public class ItemController {
         return service.searchItems(text);
     }
 
+    @GetMapping("/{itemId}")
+    public ItemResponseDto getItemByIdWithDate(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
+        return service.getItemByIdWithDate(itemId, userId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<CommentDtoResponse> createComment(@RequestHeader(X_SHARER_USER_ID) long userId,
+                                                            @PathVariable long itemId,
+                                                            @RequestBody @Valid CommentDto text) {
+        return service.createComment(userId, itemId, text);
+    }
 }
