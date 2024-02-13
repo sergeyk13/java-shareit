@@ -194,7 +194,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, @Valid CommentDto text) {
+    public CommentDtoResponse createComment(long userId, long itemId, @Valid CommentDto text) {
         Set<Booking> bookingSet = bookingRepository.findBookingsByBookerIdAndItemId(userId, itemId);
         Set<Booking> filteredBooking = bookingSet.stream()
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
@@ -221,8 +221,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException(e.getLocalizedMessage());
         }
 
-        return new ResponseEntity<>(ItemMapperInt.INSTANCE.modelCommentToDto(comment),
-                HttpStatus.OK);
+        return ItemMapperInt.INSTANCE.modelCommentToDto(comment);
     }
 
 

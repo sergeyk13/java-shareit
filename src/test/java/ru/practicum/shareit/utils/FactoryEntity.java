@@ -41,6 +41,13 @@ public class FactoryEntity {
         return new User(userId, nameAndId, email);
     }
 
+    public static User creatRandomUserWithoutId() {
+        User user = new User();
+        user.setName("Name");
+        user.setEmail("email@mail.com");
+
+        return user;
+    }
     public static User creatRandomUser(long id) {
         Random random = new Random();
         long userId = id;
@@ -56,6 +63,14 @@ public class FactoryEntity {
         String name = "Name" + itemId;
         String description = "desc" + itemId;
         return new Item(itemId, userId, name, description, true, null);
+    }
+
+    public static Item createRandomItemWithOutId(long userId) {
+        Random random = new Random();
+        long itemId = random.nextInt(10) + 1;
+        String name = "Name" + itemId;
+        String description = "desc" + itemId;
+        return new Item(null, userId, name, description, true, null);
     }
 
     public static ItemDto createRandomItemDto(Long itemId) {
@@ -93,15 +108,17 @@ public class FactoryEntity {
     public static List<Booking> generateRandomBookingList(int count, Item item, User booker) {
         List<Booking> bookingList = new ArrayList<>();
         Random random = new Random();
+        long lowerBound = 1L;
+        long upperBound = 11L;
         for (int i = 0; i < count; i++) {
             if (i > 1) {
-                Item newItem = new Item(random.nextInt(10) + 1,
+                Item newItem = new Item((long) (random.nextInt(10) + 1),
                         item.getOwnerId(),
                         item.getName(),
                         item.getDescription(),
                         random.nextBoolean(),
                         item.getRequestId());
-                User newBooker = new User(random.nextInt(10) + 1, booker.getName(), booker.getEmail());
+                User newBooker = new User(random.longs(lowerBound,upperBound).findAny().getAsLong(), booker.getName(), booker.getEmail());
                 bookingList.add(createRandomBooking(newItem, newBooker));
             } else {
                 bookingList.add(createRandomBooking(item, booker));

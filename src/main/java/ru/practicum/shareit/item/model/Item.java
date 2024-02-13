@@ -20,7 +20,7 @@ public class  Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotNull
     @Min(1)
     private long ownerId;
