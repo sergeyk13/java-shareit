@@ -27,7 +27,7 @@ public class ErrorHandler {
     public ErrorResponse handleValidation(final ValidationException e) {
         log.error(e.getMessage());
         return new ErrorResponse(
-                String.format("Ошибка с полем \"%s\".", e.getMessage()));
+                String.format("Ошибка с полем %s ", e.getMessage()));
     }
 
     @ExceptionHandler
@@ -38,7 +38,7 @@ public class ErrorHandler {
         String errorMessage = fieldError.getDefaultMessage();
         log.error(e.getMessage());
         return new ErrorResponse(
-                String.format("Ошибка поля \"%s\": %s", fieldName, errorMessage));
+                String.format("Ошибка поля %s: %s", fieldName, errorMessage));
     }
 
     @ExceptionHandler(ConversionFailedException.class)

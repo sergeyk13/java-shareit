@@ -14,7 +14,9 @@ public interface BookingService {
 
     ResponseEntity<BookingDtoResponse> getBookingById(long userId, long bookingId);
 
-    ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state);
+    ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state, int from, int size);
 
-    ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state);
+    ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state, int from, int size);
+
+    ResponseEntity<List<BookingDtoResponse>> getAll(int from, int size);
 }
