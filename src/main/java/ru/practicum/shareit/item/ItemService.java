@@ -27,5 +27,5 @@ public interface ItemService {
 
     ItemResponseDto getItemByIdWithDate(Long itemId, long userId);
 
-    ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, CommentDto text);
+    CommentDtoResponse createComment(long userId, long itemId, CommentDto text);
 }
