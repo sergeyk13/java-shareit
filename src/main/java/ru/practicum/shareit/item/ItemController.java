@@ -44,8 +44,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text) {
-        return service.searchItems(text);
+    public List<ItemDto> searchItems(
+            @RequestParam String text,
+            @RequestParam(name = "from", defaultValue = "0") int from,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return service.searchItems(text, from,size);
     }
 
     @GetMapping("/{itemId}")

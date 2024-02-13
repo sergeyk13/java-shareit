@@ -18,9 +18,6 @@ public interface BookingMapper {
     @Mapping(target = "status", expression = "java( ru.practicum.shareit.booking.model.BookingState.WAITING)")
     Booking dtoToModel(BookingDto bookingDto);
 
-    @Mapping(target = "itemId", source = "item.id")
-    BookingDto modelToDto(Booking booking);
-
     BookingDtoResponse modelToResponse(Booking booking);
 
     @Mapping(target = "bookerId", source = "booker.id")
