@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.error.model.NotFoundException;
-import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -147,7 +146,7 @@ class BookingServiceImplTest {
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
-        assertThrows(NotFoundException.class, () -> bookingService.bookingApprove(ownerId+1, bookingId, approved));
+        assertThrows(NotFoundException.class, () -> bookingService.bookingApprove(ownerId + 1, bookingId, approved));
     }
 
     @Test

@@ -32,32 +32,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
 
+    private final Item testItem = new Item(1L, 1L, "nameItem", "itemDesc", true, null);
+    private final User testUser = new User(1L, "Name", "email@mail.com");
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private ItemRepository itemRepository;
-
     @Mock
     private BookingRepository bookingRepository;
-
     @Mock
     private CommentRepository commentRepository;
-
     @InjectMocks
     private ItemServiceImpl itemService;
-
-    private final Item testItem = new Item(1L,1L,"nameItem","itemDesc",true,null);
-    private final User testUser = new User(1L,"Name","email@mail.com");
 
     @Test
     void saveItemValidUserAndItemDtoShouldReturnSavedItemDto() {
 
         long userId = 1L;
-        ItemDto itemDto = new ItemDto(1L,"nameItem","itemDesc",true,null);
+        ItemDto itemDto = new ItemDto(1L, "nameItem", "itemDesc", true, null);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-        when(itemRepository.save(any(Item.class))).thenReturn(ItemMapperInt.INSTANCE.dtoToModel(itemDto,userId));
+        when(itemRepository.save(any(Item.class))).thenReturn(ItemMapperInt.INSTANCE.dtoToModel(itemDto, userId));
 
         ItemDto savedItemDto = itemService.saveItem(userId, itemDto);
 
@@ -68,7 +63,7 @@ class ItemServiceImplTest {
     void saveItemInvalidUserShouldThrowNotFoundException() {
 
         long userId = 1L;
-        ItemDto itemDto = new ItemDto(1L,"nameItem","itemDesc",true,null);
+        ItemDto itemDto = new ItemDto(1L, "nameItem", "itemDesc", true, null);
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
@@ -80,7 +75,7 @@ class ItemServiceImplTest {
 
         long userId = 1L;
         long itemId = 1L;
-        ItemUpdatingRequest itemUpdatingRequest = new ItemUpdatingRequest(null,"NewDesc",true);
+        ItemUpdatingRequest itemUpdatingRequest = new ItemUpdatingRequest(null, "NewDesc", true);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(testItem));
@@ -88,7 +83,7 @@ class ItemServiceImplTest {
         Item updatedItem = itemService.prepareUpdating(userId, itemId, itemUpdatingRequest);
 
         assertNotNull(updatedItem);
-        assertEquals(itemUpdatingRequest.getDescription(),updatedItem.getDescription());
+        assertEquals(itemUpdatingRequest.getDescription(), updatedItem.getDescription());
     }
 
     @Test
@@ -119,7 +114,7 @@ class ItemServiceImplTest {
 
         long itemId = 1L;
         long userId = 1L;
-        List<Booking> bookingList = FactoryEntity.generateRandomBookingList(3,testItem,testUser);
+        List<Booking> bookingList = FactoryEntity.generateRandomBookingList(3, testItem, testUser);
         Page<Booking> bookingsPage = new PageImpl<>(bookingList, PageRequest.of(0, bookingList.size()), bookingList.size());
 
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(testItem));

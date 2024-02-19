@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,21 +26,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @MockBean
-    UserService userService;
-
-    @Autowired
-    private MockMvc mockMvc;
     private final UserDto userDto = new UserDto("TestUser", "testuser@example.com");
     private final UserDtoResponse userDtoResponse = new UserDtoResponse(1L, "TestUser", "testuser@example.com");
+    @Autowired
+    ObjectMapper objectMapper;
+    @MockBean
+    UserService userService;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void testCreateUser() throws Exception {
 
-       when(userService.userCreate(any())).thenReturn(userDtoResponse);
+        when(userService.userCreate(any())).thenReturn(userDtoResponse);
 
         mockMvc.perform(post("/users")
                         .content(objectMapper.writeValueAsString(userDto))

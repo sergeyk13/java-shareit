@@ -59,8 +59,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 requestPage.stream()
                         .filter(itemRequest -> itemRequest.getCreator().getId() != userId)
                         .map(ItemRequestMapper.INSTANCE::modelToResponseDto)
-                        .collect(Collectors.toList())
-                , HttpStatus.OK);
+                        .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @Override

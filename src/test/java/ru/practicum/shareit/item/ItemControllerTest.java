@@ -4,22 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
-import ru.practicum.shareit.request.ItemRequestRepository;
-import ru.practicum.shareit.user.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -35,15 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
 
+    private final ItemDto itemDto = new ItemDto(1L, "TestItem", "Description", true, null);
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private ItemService itemService;
-
-    private final ItemDto itemDto = new ItemDto(1L, "TestItem", "Description", true, null);
 
     @Test
     void testItemCreate() throws Exception {
