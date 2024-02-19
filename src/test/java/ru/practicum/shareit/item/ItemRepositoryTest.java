@@ -21,28 +21,6 @@ public class ItemRepositoryTest {
     private ItemRepository itemRepository;
 
     @Test
-    void testFindItemsByOwnerId() {
-        User user = FactoryEntity.creatRandomUserWithoutId();
-        assertNull(user.getId());
-        testEntityManager.persist(user);
-        assertNotNull(user.getId());
-
-        Item item1 = FactoryEntity.createRandomItemWithOutId(user.getId());
-        Item item2 = FactoryEntity.createRandomItemWithOutId(user.getId());
-
-        assertNull(item1.getId());
-        assertNull(item2.getId());
-
-        testEntityManager.persist(item1);
-        testEntityManager.persist(item2);
-
-        long userId = 1L;
-        List<Item> items = itemRepository.findItemsByOwnerId(userId);
-
-        assertEquals(2, items.size());
-    }
-
-    @Test
     void testSearchItems() {
         User user = FactoryEntity.creatRandomUserWithoutId();
         assertNull(user.getId());

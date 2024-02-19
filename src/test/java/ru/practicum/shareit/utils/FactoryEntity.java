@@ -45,17 +45,15 @@ public class FactoryEntity {
         User user = new User();
         user.setName("Name");
         user.setEmail("email@mail.com");
-
         return user;
     }
 
     public static User creatRandomUser(long id) {
         Random random = new Random();
-        long userId = id;
-        String nameAndId = "Name" + userId;
-        String email = "email" + userId + "@mail.com";
+        String nameAndId = "Name" + id;
+        String email = "email" + id + "@mail.com";
 
-        return new User(userId, nameAndId, email);
+        return new User(id, nameAndId, email);
     }
 
     public static Item createRandomItem(long userId) {
