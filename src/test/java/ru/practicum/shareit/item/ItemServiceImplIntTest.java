@@ -9,21 +9,17 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.mapper.ItemMapperInt;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.utils.FactoryEntity;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -39,11 +35,11 @@ class ItemServiceImplIntTest {
         em.persist(user);
 
         ItemDto itemDto = FactoryEntity.createRandomItemDto(1L);
-        Item item1 = ItemMapperInt.INSTANCE.dtoToModel(itemDto,user.getId());
+        Item item1 = ItemMapperInt.INSTANCE.dtoToModel(itemDto, user.getId());
         em.persist(item1);
 
         ItemDto itemDto2 = FactoryEntity.createRandomItemDto(2L);
-        Item item2 = ItemMapperInt.INSTANCE.dtoToModel(itemDto2,user.getId());
+        Item item2 = ItemMapperInt.INSTANCE.dtoToModel(itemDto2, user.getId());
         em.persist(item2);
 
         List<ItemResponseDto> items = itemService.getAllByUserId(user.getId());

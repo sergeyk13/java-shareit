@@ -48,6 +48,7 @@ public class FactoryEntity {
 
         return user;
     }
+
     public static User creatRandomUser(long id) {
         Random random = new Random();
         long userId = id;
@@ -118,7 +119,7 @@ public class FactoryEntity {
                         item.getDescription(),
                         random.nextBoolean(),
                         item.getRequestId());
-                User newBooker = new User(random.longs(lowerBound,upperBound).findAny().getAsLong(), booker.getName(), booker.getEmail());
+                User newBooker = new User(random.longs(lowerBound, upperBound).findAny().getAsLong(), booker.getName(), booker.getEmail());
                 bookingList.add(createRandomBooking(newItem, newBooker));
             } else {
                 bookingList.add(createRandomBooking(item, booker));

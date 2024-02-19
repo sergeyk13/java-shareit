@@ -6,13 +6,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.model.UserDtoResponse;
 import ru.practicum.shareit.user.model.UserUpdateRequest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -28,7 +28,8 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser() {long userId = 1L;
+    void updateUser() {
+        long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
         userUpdateRequest.setName("New Name");
 
