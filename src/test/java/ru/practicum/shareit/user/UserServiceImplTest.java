@@ -6,10 +6,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDtoResponse;
 import ru.practicum.shareit.user.model.UserUpdateRequest;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +25,30 @@ class UserServiceImplTest {
 
     public UserServiceImplTest() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void updateUser() {
+        long userId = 1L;
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
+        userUpdateRequest.setName("New Name");
+
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setName("Old Name");
+        existingUser.setEmail("old@example.com");
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        UserDtoResponse updatedUser = userService.updateUser(userId, userUpdateRequest);
+
+        assertEquals(userId, updatedUser.getId());
+        assertEquals(userUpdateRequest.getName(), updatedUser.getName());
+        assertEquals(existingUser.getEmail(), updatedUser.getEmail());
+
+        verify(userRepository, times(2)).findById(userId);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
