@@ -6,12 +6,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.model.UserDtoResponse;
 import ru.practicum.shareit.user.model.UserUpdateRequest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
