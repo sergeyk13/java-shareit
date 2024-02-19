@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
@@ -18,5 +17,5 @@ public interface UserMapper {
 
     User dtoToModel(UserDto userDto);
 
-    List<UserDtoResponse> modelListToDtoList (Iterable<User> users);
+    List<UserDtoResponse> modelListToDtoList(Iterable<User> users);
 }
