@@ -20,6 +20,7 @@ public interface ItemMapperInt {
     CommentDtoResponse modelCommentToDto(Comment comment);
 
     ItemDto modelToDto(Item item);
+
     @Mapping(target = "id", ignore = true)
     Item dtoToModel(ItemDto itemDto, long ownerId);
 

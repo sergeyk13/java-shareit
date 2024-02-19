@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
