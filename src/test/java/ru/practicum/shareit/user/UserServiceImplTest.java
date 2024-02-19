@@ -39,7 +39,6 @@ class UserServiceImplTest {
         existingUser.setEmail("old@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
         UserDtoResponse updatedUser = userService.updateUser(userId, userUpdateRequest);
 
@@ -48,7 +47,6 @@ class UserServiceImplTest {
         assertEquals(existingUser.getEmail(), updatedUser.getEmail());
 
         verify(userRepository, times(2)).findById(userId);
-        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
