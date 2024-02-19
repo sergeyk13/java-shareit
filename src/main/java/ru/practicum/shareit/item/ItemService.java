@@ -21,11 +21,11 @@ public interface ItemService {
 
     void removeItem(long userId, long itemId);
 
-    List<ItemDto> searchItems(String searchText);
+    List<ItemDto> searchItems(String searchText, int from, int size);
 
     Item prepareUpdating(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest);
 
     ItemResponseDto getItemByIdWithDate(Long itemId, long userId);
 
-    ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, CommentDto text);
+    CommentDtoResponse createComment(long userId, long itemId, CommentDto text);
 }
