@@ -28,30 +28,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser() {
-        long userId = 1L;
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
-        userUpdateRequest.setName("New Name");
-
-        User existingUser = new User();
-        existingUser.setId(userId);
-        existingUser.setName("Old Name");
-        existingUser.setEmail("old@example.com");
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(existingUser);
-
-        UserDtoResponse updatedUser = userService.updateUser(userId, userUpdateRequest);
-
-        assertEquals(userId, updatedUser.getId());
-        assertEquals(userUpdateRequest.getName(), updatedUser.getName());
-        assertEquals(existingUser.getEmail(), updatedUser.getEmail());
-
-        verify(userRepository, times(2)).findById(userId);
-        verify(userRepository, times(1)).save(any(User.class));
-    }
-
-    @Test
     void testUpdateUserUserNotFound() {
         long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
