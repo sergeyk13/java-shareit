@@ -7,12 +7,10 @@ import org.mockito.MockitoAnnotations;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDtoResponse;
-
 import ru.practicum.shareit.user.model.UserUpdateRequest;
 
 import java.util.Optional;
 
- add-item-requests
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -30,7 +28,6 @@ class UserServiceImplTest {
     }
 
     @Test
- add-item-requests
     void updateUser() {
         long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
