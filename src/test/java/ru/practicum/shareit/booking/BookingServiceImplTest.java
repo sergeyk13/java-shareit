@@ -35,9 +35,6 @@ class BookingServiceImplTest {
     @Mock
     private ItemRepository itemRepository;
 
-//    @Mock
-//    private CommentRepository commentRepository;
-
     @InjectMocks
     private BookingServiceImpl bookingService;
 
