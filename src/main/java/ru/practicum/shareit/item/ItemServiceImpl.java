@@ -3,8 +3,10 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -23,6 +25,7 @@ import ru.practicum.shareit.item.mapper.ItemMapperInt;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -41,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository requestRepository;
 
     @Transactional
     @Override
@@ -48,12 +52,17 @@ public class ItemServiceImpl implements ItemService {
         if (userRepository.findById(userId).isPresent()) {
             try {
                 Item savedItem = ItemMapperInt.INSTANCE.dtoToModel(itemDto, userId);
+                if (itemDto.getRequestId() != null) {
+                    requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                            new NotFoundException(
+                                    String.format("Request with ID:%d not found", itemDto.getRequestId())));
+                }
                 log.info("Create Item: {}", savedItem);
                 itemRepository.save(savedItem);
                 return ItemMapperInt.INSTANCE.modelToDto(savedItem);
             } catch (DataIntegrityViolationException e) {
                 log.error("Error save Item: {}, owner id isn't found", itemDto);
-                throw new NotFoundException("Error save Item owner id isn't found");
+                throw new NotFoundException(String.format("Error save Item owner id: %d isn't found", userId));
             }
         } else throw new NotFoundException(String.format("User with ID:%d not found", userId));
     }
@@ -97,13 +106,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String searchText) {
+    public List<ItemDto> searchItems(String searchText, int from, int size) {
 
         if (searchText.isBlank()) {
             return new ArrayList<>();
         } else {
             log.info("Search items contain: " + searchText);
-            return ItemMapperInt.INSTANCE.mapModelListToDtoList(itemRepository.searchItems(searchText.toLowerCase()));
+            List<Item> items = itemRepository.searchItems(searchText.toLowerCase());
+            return items.stream()
+                    .map(ItemMapperInt.INSTANCE::modelToDto)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -146,7 +158,10 @@ public class ItemServiceImpl implements ItemService {
 
             if (checkOwner(userId, itemId)) {
 
-                List<Booking> bookings = bookingRepository.findBookingsByItemIdOrderByStartDesc(itemId);
+                Pageable page = PageRequest.of(0, 30, Sort.by("start").descending());
+                Page<Booking> bookingsPages = bookingRepository.findBookingsByItemIdOrderByStartDesc(page, itemId);
+                List<Booking> bookings = bookingsPages.stream()
+                        .collect(Collectors.toList());
 
                 lastBooking = bookings.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
@@ -177,7 +192,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public ResponseEntity<CommentDtoResponse> createComment(long userId, long itemId, @Valid CommentDto text) {
+    public CommentDtoResponse createComment(long userId, long itemId, @Valid CommentDto text) {
         Set<Booking> bookingSet = bookingRepository.findBookingsByBookerIdAndItemId(userId, itemId);
         Set<Booking> filteredBooking = bookingSet.stream()
                 .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
@@ -204,8 +219,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException(e.getLocalizedMessage());
         }
 
-        return new ResponseEntity<>(ItemMapperInt.INSTANCE.modelCommentToDto(comment),
-                HttpStatus.OK);
+        return ItemMapperInt.INSTANCE.modelCommentToDto(comment);
     }
 
 

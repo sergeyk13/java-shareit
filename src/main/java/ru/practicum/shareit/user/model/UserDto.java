@@ -13,7 +13,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserDto implements Serializable {
 
-    private long id;
     @NotBlank
     private String name;
     @NotBlank
