@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,7 +14,6 @@ import ru.practicum.shareit.user.model.UserUpdateRequest;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -29,16 +29,21 @@ class UserServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void updateUserName() {
-        long userId = 1L;
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
-        userUpdateRequest.setName("New Name");
+    User existingUser = new User();
+    long userId = 1L;
 
-        User existingUser = new User();
+    @BeforeEach
+    void setUp() {
         existingUser.setId(userId);
         existingUser.setName("Old Name");
         existingUser.setEmail("old@example.com");
+    }
+
+
+    @Test
+    void updateUserName() {
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
+        userUpdateRequest.setName("New Name");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
@@ -53,14 +58,8 @@ class UserServiceImplTest {
 
     @Test
     void updateUserEmail() {
-        long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
         userUpdateRequest.setEmail("new@example.com");
-
-        User existingUser = new User();
-        existingUser.setId(userId);
-        existingUser.setName("Old Name");
-        existingUser.setEmail("old@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
@@ -75,15 +74,9 @@ class UserServiceImplTest {
 
     @Test
     void updateUserEmailAndName() {
-        long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
         userUpdateRequest.setName("New Name");
         userUpdateRequest.setEmail("new@example.com");
-
-        User existingUser = new User();
-        existingUser.setId(userId);
-        existingUser.setName("Old Name");
-        existingUser.setEmail("old@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
 
@@ -98,13 +91,7 @@ class UserServiceImplTest {
 
     @Test
     void shouldUpdateUserWithoutEmailAndName() {
-        long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
-
-        User existingUser = new User();
-        existingUser.setId(userId);
-        existingUser.setName("Old Name");
-        existingUser.setEmail("old@example.com");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
         assertThrows(ValidationException.class, () -> userService.updateUser(userId,userUpdateRequest));
@@ -112,7 +99,6 @@ class UserServiceImplTest {
 
     @Test
     void testUpdateUserUserNotFound() {
-        long userId = 1L;
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());

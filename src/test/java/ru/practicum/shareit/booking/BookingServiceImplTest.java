@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,19 +39,27 @@ class BookingServiceImplTest {
     @InjectMocks
     private BookingServiceImpl bookingService;
 
+    long ownerId = 11L;
+    User booker = FactoryEntity.creatRandomUser();
+    Item item = FactoryEntity.createRandomItem(ownerId);
+    long bookerId = booker.getId();
+    BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
+    User owner = FactoryEntity.creatRandomUser();
+    Booking booking = FactoryEntity.createRandomBooking(item, booker);
+    long bookingId = booking.getId();
+    boolean approved = false;
+
+    @BeforeEach
+    void setUp() {
+        booking.setStatus(BookingState.WAITING);
+    }
+
     @Test
     void bookingCreateValidBookingSuccess() {
-
-        long ownerId = 11L;
-        User booker = FactoryEntity.creatRandomUser();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        long bookerId = booker.getId();
-        BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(itemRepository.findById(bookingDto.getItemId())).thenReturn(Optional.of(item));
         when(bookingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
 
         ResponseEntity<BookingDtoResponse> response = bookingService.bookingCreate(booker.getId(), bookingDto);
 
@@ -61,11 +70,6 @@ class BookingServiceImplTest {
     @Test
     void bookingCreateUserNotFoundThrowsNotFoundException() {
 
-        long ownerId = 11L;
-        User booker = FactoryEntity.creatRandomUser();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        long bookerId = booker.getId();
-        BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
         when(userRepository.findById(bookerId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookingService.bookingCreate(bookerId, bookingDto));
@@ -73,12 +77,6 @@ class BookingServiceImplTest {
 
     @Test
     void bookingCreateItemNotFoundThrowsNotFoundException() {
-
-        long ownerId = 11L;
-        User booker = FactoryEntity.creatRandomUser();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        long bookerId = booker.getId();
-        BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
 
         when(userRepository.findById(bookerId)).thenReturn(Optional.of(booker));
         when(itemRepository.findById(bookingDto.getItemId())).thenReturn(Optional.empty());
@@ -89,13 +87,6 @@ class BookingServiceImplTest {
     @Test
     void bookingApproveValidBookingApprovedSuccess() {
 
-        User owner = FactoryEntity.creatRandomUser();
-        long ownerId = owner.getId();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        User booker = FactoryEntity.creatRandomUser(ownerId + 1);
-        Booking booking = FactoryEntity.createRandomBooking(item, booker);
-        booking.setStatus(BookingState.WAITING);
-        long bookingId = booking.getId();
         boolean approved = true;
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
@@ -111,15 +102,6 @@ class BookingServiceImplTest {
     @Test
     void bookingApproveValidBookingRejectedSuccess() {
 
-        User owner = FactoryEntity.creatRandomUser();
-        long ownerId = owner.getId();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        User booker = FactoryEntity.creatRandomUser(ownerId + 1);
-        Booking booking = FactoryEntity.createRandomBooking(item, booker);
-        booking.setStatus(BookingState.WAITING);
-        long bookingId = booking.getId();
-        boolean approved = false;
-
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
         ResponseEntity<BookingDtoResponse> response = bookingService.bookingApprove(ownerId, bookingId, approved);
@@ -132,15 +114,6 @@ class BookingServiceImplTest {
     @Test
     void bookingApproveUserNotIsOwnerThrowsNotFoundException() {
 
-        User owner = FactoryEntity.creatRandomUser();
-        long ownerId = owner.getId();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        User booker = FactoryEntity.creatRandomUser(ownerId + 1);
-        Booking booking = FactoryEntity.createRandomBooking(item, booker);
-        booking.setStatus(BookingState.WAITING);
-        long bookingId = booking.getId();
-        boolean approved = false;
-
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(booking));
 
         assertThrows(NotFoundException.class, () -> bookingService.bookingApprove(ownerId + 1, bookingId, approved));
@@ -148,14 +121,6 @@ class BookingServiceImplTest {
 
     @Test
     void bookingApprove_BookingNotFound_ThrowsNotFoundException() {
-        User owner = FactoryEntity.creatRandomUser();
-        long ownerId = owner.getId();
-        Item item = FactoryEntity.createRandomItem(ownerId);
-        User booker = FactoryEntity.creatRandomUser(ownerId + 1);
-        Booking booking = FactoryEntity.createRandomBooking(item, booker);
-        booking.setStatus(BookingState.WAITING);
-        long bookingId = booking.getId();
-        boolean approved = false;
 
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.empty());
 
