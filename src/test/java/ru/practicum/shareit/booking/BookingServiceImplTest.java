@@ -58,12 +58,6 @@ class BookingServiceImplTest {
     @Test
     void bookingCreateValidBookingSuccess() {
 
-    @InjectMocks
-    private BookingServiceImpl bookingService;
-
-    @Test
-    void bookingCreateValidBookingSuccess() {
-
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
         when(itemRepository.findById(bookingDto.getItemId())).thenReturn(Optional.of(item));
         when(bookingRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +14,7 @@ import ru.practicum.shareit.user.model.UserUpdateRequest;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
@@ -95,12 +94,11 @@ class UserServiceImplTest {
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
-        assertThrows(ValidationException.class, () -> userService.updateUser(userId,userUpdateRequest));
+        assertThrows(ValidationException.class, () -> userService.updateUser(userId, userUpdateRequest));
     }
 
     @Test
     void testUpdateUserUserNotFound() {
-      
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
