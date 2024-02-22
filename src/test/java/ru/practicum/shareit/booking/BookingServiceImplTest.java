@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +54,12 @@ class BookingServiceImplTest {
     void setUp() {
         booking.setStatus(BookingState.WAITING);
     }
+
+    @Test
+    void bookingCreateValidBookingSuccess() {
+
+    @InjectMocks
+    private BookingServiceImpl bookingService;
 
     @Test
     void bookingCreateValidBookingSuccess() {
