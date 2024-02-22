@@ -34,6 +34,10 @@ class ItemServiceImplTest {
 
     private final Item testItem = new Item(1L, 1L, "nameItem", "itemDesc", true, null);
     private final User testUser = new User(1L, "Name", "email@mail.com");
+    ItemDto itemDto = new ItemDto(1L, "nameItem", "itemDesc", true, null);
+    long userId = 1L;
+    long itemId = 1L;
+
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -48,9 +52,6 @@ class ItemServiceImplTest {
     @Test
     void saveItemValidUserAndItemDtoShouldReturnSavedItemDto() {
 
-        long userId = 1L;
-        ItemDto itemDto = new ItemDto(1L, "nameItem", "itemDesc", true, null);
-
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(itemRepository.save(any(Item.class))).thenReturn(ItemMapperInt.INSTANCE.dtoToModel(itemDto, userId));
 
@@ -62,9 +63,6 @@ class ItemServiceImplTest {
     @Test
     void saveItemInvalidUserShouldThrowNotFoundException() {
 
-        long userId = 1L;
-        ItemDto itemDto = new ItemDto(1L, "nameItem", "itemDesc", true, null);
-
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> itemService.saveItem(userId, itemDto));
@@ -73,8 +71,6 @@ class ItemServiceImplTest {
     @Test
     void prepareUpdatingValidUserAndItemIdShouldReturnUpdatedItem() {
 
-        long userId = 1L;
-        long itemId = 1L;
         ItemUpdatingRequest itemUpdatingRequest = new ItemUpdatingRequest(null, "NewDesc", true);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -88,8 +84,7 @@ class ItemServiceImplTest {
 
     @Test
     void prepareUpdatingInvalidUserShouldThrowNotFoundException() {
-        long userId = 1L;
-        long itemId = 1L;
+
         ItemUpdatingRequest itemUpdatingRequest = new ItemUpdatingRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -99,8 +94,7 @@ class ItemServiceImplTest {
 
     @Test
     void prepareUpdatingInvalidItemShouldThrowNotFoundException() {
-        long userId = 1L;
-        long itemId = 1L;
+
         ItemUpdatingRequest itemUpdatingRequest = new ItemUpdatingRequest();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
@@ -112,8 +106,6 @@ class ItemServiceImplTest {
     @Test
     void getItemByIdWithDateValidItemAndUserShouldReturnItemResponseDto() {
 
-        long itemId = 1L;
-        long userId = 1L;
         List<Booking> bookingList = FactoryEntity.generateRandomBookingList(3, testItem, testUser);
         Page<Booking> bookingsPage = new PageImpl<>(bookingList, PageRequest.of(0, bookingList.size()), bookingList.size());
 
@@ -132,11 +124,7 @@ class ItemServiceImplTest {
     @Test
     void getItemByIdWithDateInvalidItemShouldThrowNotFoundException() {
 
-        Long itemId = 1L;
-        long userId = 1L;
-
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
-
 
         assertThrows(NotFoundException.class, () -> itemService.getItemByIdWithDate(itemId, userId));
     }
