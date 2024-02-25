@@ -10,6 +10,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.constants.HeaderConstants.X_SHARER_USER_ID;
@@ -43,10 +44,9 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(
-            @RequestParam String text,
-            @RequestParam(name = "from", defaultValue = "0") int from,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
+    public List<ItemDto> searchItems(@RequestParam String text,
+                                     @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                     @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero int size) {
         return service.searchItems(text, from, size);
     }
 

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapperInt;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -28,28 +29,36 @@ import static org.hamcrest.Matchers.equalTo;
 class BookingServiceImplIntTest {
     private final EntityManager em;
     private final BookingService bookingService;
+    private UserDto ownerDto;
+    private UserDto userDto2;
+    private ItemDto itemDto;
+
+    @BeforeEach
+    void setUp() {
+        ownerDto = FactoryEntity.creatRandomUserDto();
+        userDto2 = FactoryEntity.creatRandomUserDto();
+        itemDto = FactoryEntity.createRandomItemDto(1L);
+    }
 
     @Test
     void getBookingById() {
-        UserDto ownerDto = FactoryEntity.creatRandomUserDto();
+
         User owner = UserMapper.INSTANCE.dtoToModel(ownerDto);
         em.persist(owner);
 
-        UserDto userDto2 = FactoryEntity.creatRandomUserDto();
         User booker = UserMapper.INSTANCE.dtoToModel(userDto2);
         em.persist(booker);
 
-        ItemDto itemDto = FactoryEntity.createRandomItemDto(1L);
-        Item item1 = ItemMapperInt.INSTANCE.dtoToModel(itemDto, owner.getId());
-        em.persist(item1);
+        Item item = ItemMapper.INSTANCE.dtoToModel(itemDto, owner.getId());
+        em.persist(item);
 
-        BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item1);
-        bookingService.bookingCreate(booker.getId(), bookingDto);
+        BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
+        long bookingId = bookingService.bookingCreate(booker.getId(), bookingDto).getBody().getId();
 
-        ResponseEntity<BookingDtoResponse> response = bookingService.getBookingById(booker.getId(), 1);
+        ResponseEntity<BookingDtoResponse> response = bookingService.getBookingById(booker.getId(),bookingId);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(response.getBody().getBooker().getName(), equalTo(booker.getName()));
-        assertThat(response.getBody().getItem().getName(), equalTo(item1.getName()));
+        assertThat(response.getBody().getItem().getName(), equalTo(item.getName()));
     }
 }

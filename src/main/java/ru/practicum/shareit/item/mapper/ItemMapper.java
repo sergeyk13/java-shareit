@@ -13,8 +13,8 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 @Mapper
-public interface ItemMapperInt {
-    ItemMapperInt INSTANCE = Mappers.getMapper(ItemMapperInt.class);
+public interface ItemMapper {
+    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
     @Mapping(target = "authorName", source = "user.name")
     CommentDtoResponse modelCommentToDto(Comment comment);

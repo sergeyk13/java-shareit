@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
@@ -28,6 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final UserRepository userRepository;
     private final ItemRequestRepository requestRepository;
 
+    @Transactional
     @Override
     public ResponseEntity<ItemRequestDto> requestCreate(long userId, ItemRequestDto requestDto) {
         User user = checkUser(userId);
@@ -41,6 +43,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<List<ItemRequestDtoResponse>> getRequestByUser(long userId) {
         checkUser(userId);
@@ -49,19 +52,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<List<ItemRequestDtoResponse>> getAllRequests(long userId, int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "created");
         Pageable page = PageRequest.of(from, size, sortByStart);
-        Page<ItemRequest> requestPage = requestRepository.findAll(page);
+        Page<ItemRequest> requestPage = requestRepository.findItemRequestsNotCreatedByUserId(userId,page);
         return new ResponseEntity<>(
                 requestPage.stream()
-                        .filter(itemRequest -> itemRequest.getCreator().getId() != userId)
                         .map(ItemRequestMapper.INSTANCE::modelToResponseDto)
                         .collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<ItemRequestDtoResponse> getRequestById(long userId, long requestId) {
         checkUser(userId);

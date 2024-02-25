@@ -13,7 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.mapper.ItemMapperInt;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdatingRequest;
 import ru.practicum.shareit.user.UserRepository;
@@ -53,7 +53,7 @@ class ItemServiceImplTest {
     void saveItemValidUserAndItemDtoShouldReturnSavedItemDto() {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
-        when(itemRepository.save(any(Item.class))).thenReturn(ItemMapperInt.INSTANCE.dtoToModel(itemDto, userId));
+        when(itemRepository.save(any(Item.class))).thenReturn(ItemMapper.INSTANCE.dtoToModel(itemDto, userId));
 
         ItemDto savedItemDto = itemService.saveItem(userId, itemDto);
 

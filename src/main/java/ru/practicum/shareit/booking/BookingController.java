@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.BookingState;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.constants.HeaderConstants.X_SHARER_USER_ID;
@@ -44,8 +45,8 @@ public class BookingController {
     public ResponseEntity<List<BookingDtoResponse>> getBookingByState(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(name = "state", defaultValue = "ALL") BookingState state,
-            @RequestParam(name = "from", defaultValue = "0") int from,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero int size) {
         return service.getBookingByState(userId, state, from, size);
     }
 
@@ -53,8 +54,8 @@ public class BookingController {
     public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(name = "state", defaultValue = "ALL") BookingState state,
-            @RequestParam(name = "from", defaultValue = "0") int from,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
+            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(name = "size", defaultValue = "10") @PositiveOrZero int size) {
         return service.getBookingForOwnerByState(userId, state, from, size);
     }
 }

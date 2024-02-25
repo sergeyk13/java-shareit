@@ -21,6 +21,7 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.utils.MyPageRequest;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -133,31 +134,30 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state, int from, int size) {
+    public ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state,
+                                                                      int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
-        int page = from / size;
-        int elementOnPage = from % size;
-        Pageable pageable = PageRequest.of(page, size, sortByStart);
+        Pageable pageable = MyPageRequest.of(from, size, sortByStart);
         Page<Booking> bookings = bookingRepository.findBookingsByBookerIdOrderByStartDesc(pageable, userId);
         log.info("Return bookings by state: {}", state);
-        return getListSortedByState(bookings, state, elementOnPage, size);
+        return getListSortedByState(bookings, state, from, size);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state, int from, int size) {
+    public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state,
+                                                                              int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
-        int page = from / size;
-        int elementOnPage = from % size;
-        Pageable pageable = PageRequest.of(page, size, sortByStart);
+        Pageable pageable = MyPageRequest.of(from, size, sortByStart);
 
         Page<Booking> bookings = bookingRepository.findBookingsByItemOwnerIdOrderByStartDesc(pageable, userId);
         log.info("Return bookings by state: {}", state);
-        return getListSortedByState(bookings, state, elementOnPage, size);
+        return getListSortedByState(bookings, state, from, size);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ResponseEntity<List<BookingDtoResponse>> getAll(int from, int size) {
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
@@ -209,8 +209,9 @@ public class BookingServiceImpl implements BookingService {
 
     private ResponseEntity<List<BookingDtoResponse>> getListSortedByState(Page<Booking> bookingsPage,
                                                                           BookingState state,
-                                                                          int elementOnPage,
+                                                                          int from,
                                                                           int size) {
+        int elementOnPage = from % size;
         List<Booking> bookings = bookingsPage.stream()
                 .skip(elementOnPage)
                 .limit(size)

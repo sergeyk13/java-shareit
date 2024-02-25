@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.mapper.ItemMapperInt;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -35,11 +35,11 @@ class ItemServiceImplIntTest {
         em.persist(user);
 
         ItemDto itemDto = FactoryEntity.createRandomItemDto(1L);
-        Item item1 = ItemMapperInt.INSTANCE.dtoToModel(itemDto, user.getId());
+        Item item1 = ItemMapper.INSTANCE.dtoToModel(itemDto, user.getId());
         em.persist(item1);
 
         ItemDto itemDto2 = FactoryEntity.createRandomItemDto(2L);
-        Item item2 = ItemMapperInt.INSTANCE.dtoToModel(itemDto2, user.getId());
+        Item item2 = ItemMapper.INSTANCE.dtoToModel(itemDto2, user.getId());
         em.persist(item2);
 
         List<ItemResponseDto> items = itemService.getAllByUserId(user.getId());

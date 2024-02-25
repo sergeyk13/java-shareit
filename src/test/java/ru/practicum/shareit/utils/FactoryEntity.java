@@ -94,6 +94,13 @@ public class FactoryEntity {
         return new BookingDto(item.getId(), start, end);
     }
 
+    public static BookingDto createRandomBookingDto(Long itemId) {
+        Random random = new Random();
+        LocalDateTime start = LocalDateTime.now();
+        LocalDateTime end = start.plusDays(random.nextInt(10) + 1);
+        return new BookingDto(itemId, start, end);
+    }
+
     public static Booking createRandomBooking(Item item, User booker) {
         Random random = new Random();
         LocalDateTime start = LocalDateTime.now();

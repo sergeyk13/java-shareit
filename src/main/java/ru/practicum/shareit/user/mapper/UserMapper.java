@@ -12,7 +12,6 @@ import java.util.List;
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-
     UserDtoResponse modelToDto(User user);
 
     User dtoToModel(UserDto userDto);

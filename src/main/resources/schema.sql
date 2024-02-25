@@ -1,9 +1,9 @@
-drop table if exists
-    users,
-    request,
-    items,
-    booking,
-    comments;
+-- drop table if exists
+--     users,
+--     request,
+--     items,
+--     booking,
+--     comments;
 
 CREATE TABLE IF NOT EXISTS users
 (
