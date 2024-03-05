@@ -2,6 +2,10 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.utils.MyPageRequest;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -129,20 +134,41 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state) {
+    public ResponseEntity<List<BookingDtoResponse>> getBookingByState(long userId, BookingState state,
+                                                                      int from, int size) {
         checkUser(userId);
-        List<Booking> bookings = bookingRepository.findBookingsByBookerIdOrderByStartDesc(userId);
+        Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = MyPageRequest.of(from, size, sortByStart);
+        Page<Booking> bookings = bookingRepository.findBookingsByBookerIdOrderByStartDesc(pageable, userId);
         log.info("Return bookings by state: {}", state);
-        return getListSortedByState(bookings, state);
+        return getListSortedByState(bookings, state, from, size);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state) {
+    public ResponseEntity<List<BookingDtoResponse>> getBookingForOwnerByState(long userId, BookingState state,
+                                                                              int from, int size) {
         checkUser(userId);
-        List<Booking> bookings = bookingRepository.findBookingsByItemOwnerIdOrderByStartDesc(userId);
+        Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = MyPageRequest.of(from, size, sortByStart);
+
+        Page<Booking> bookings = bookingRepository.findBookingsByItemOwnerIdOrderByStartDesc(pageable, userId);
         log.info("Return bookings by state: {}", state);
-        return getListSortedByState(bookings, state);
+        return getListSortedByState(bookings, state, from, size);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ResponseEntity<List<BookingDtoResponse>> getAll(int from, int size) {
+        Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
+        Pageable page = PageRequest.of(from, size, sortByStart);
+        Page<Booking> bookingPage = bookingRepository.findAll(page);
+        log.info("return all booking from:{} size:{}", from, size);
+        return new ResponseEntity<>(bookingPage.stream()
+                .map(BookingMapper.INSTANCE::modelToResponse)
+                .collect(Collectors.toList()),
+                HttpStatus.OK);
+
     }
 
     private void checkValidation(@Valid Booking booking) {
@@ -181,8 +207,15 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    private ResponseEntity<List<BookingDtoResponse>> getListSortedByState(List<Booking> bookings,
-                                                                          BookingState state) {
+    private ResponseEntity<List<BookingDtoResponse>> getListSortedByState(Page<Booking> bookingsPage,
+                                                                          BookingState state,
+                                                                          int from,
+                                                                          int size) {
+        int elementOnPage = from % size;
+        List<Booking> bookings = bookingsPage.stream()
+                .skip(elementOnPage)
+                .limit(size)
+                .collect(Collectors.toList());
         bookings.forEach(booking -> booking.setState(calculateState(booking)));
 
         List<BookingDtoResponse> sortedBookings;

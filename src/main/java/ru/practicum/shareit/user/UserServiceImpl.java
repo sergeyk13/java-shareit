@@ -9,9 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.model.ConflictException;
 import ru.practicum.shareit.error.model.NotFoundException;
 import ru.practicum.shareit.error.model.ValidationException;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
-import ru.practicum.shareit.user.model.UserMapper;
+import ru.practicum.shareit.user.model.UserDtoResponse;
 import ru.practicum.shareit.user.model.UserUpdateRequest;
 
 import javax.validation.Valid;
@@ -26,10 +27,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto userCreate(User user) {
+    public UserDtoResponse userCreate(UserDto userDto) {
         try {
-            log.info("Save user: name:{}, email:{}", user.getName(), user.getEmail());
-            return UserMapper.userToUserDto(repository.save(user));
+            log.info("Save user: name:{}, email:{}", userDto.getName(), userDto.getEmail());
+            return UserMapper.INSTANCE.modelToDto(repository.save(
+                    UserMapper.INSTANCE.dtoToModel(userDto)
+            ));
         } catch (DataIntegrityViolationException e) {
             if (isDuplicateKeyViolation(e)) {
                 log.error("Error creating user: {}", e.getMessage());
@@ -42,20 +45,22 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserDto getUser(long userId) {
+    public UserDtoResponse getUser(long userId) {
         log.info("Return user: {}", userId);
-        return UserMapper.userToUserDto(repository.findById(userId));
+        return UserMapper.INSTANCE.modelToDto(repository.findById(userId).orElseThrow(() ->
+                new NotFoundException(String.format("User witch id:%d not found", userId))
+        ));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<UserDto> getAll() {
-        return UserMapper.userToUserDto(repository.findAll());
+    public List<UserDtoResponse> getAll() {
+        return UserMapper.INSTANCE.modelListToDtoList(repository.findAll());
     }
 
     @Transactional
     @Override
-    public UserDto updateUser(long userId, UserUpdateRequest userUpdateRequest) {
+    public UserDtoResponse updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         Optional<User> user = repository.findById(userId);
         User updateUser;
 
@@ -89,9 +94,10 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new ValidationException("Validation error");
         }
-        userCreate(updateUser);
         log.info("Update user: {}", userId);
-        return UserMapper.userToUserDto(repository.findById(userId));
+        return UserMapper.INSTANCE.modelToDto(repository.findById(userId).orElseThrow(() ->
+                new NotFoundException(String.format("User witch id:%d not found", userId))
+        ));
     }
 
     @Transactional

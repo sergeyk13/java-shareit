@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.model.UserDto;
+import ru.practicum.shareit.user.model.UserDtoResponse;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -25,5 +25,5 @@ public class BookingDtoResponse {
     @NotNull
     private BookingState status;
     private ItemDto item;
-    private UserDto booker;
+    private UserDtoResponse booker;
 }
