@@ -60,7 +60,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> createComment(long userId, long itemId, CommentDto text) {
-        String path = String.format("%d/comment", itemId);
-        return post(path, itemId, text);
+        String path = String.format("/%d/comment", itemId);
+        return post(path, userId, text);
     }
 }

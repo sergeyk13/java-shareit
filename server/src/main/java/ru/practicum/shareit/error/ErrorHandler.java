@@ -26,8 +26,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(final ValidationException e) {
         log.error(e.getMessage());
-        return new ErrorResponse(
-                String.format("Ошибка с полем %s ", e.getMessage()));
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler

@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.model.NotFoundException;
@@ -31,7 +29,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional
     @Override
-    public ResponseEntity<ItemRequestDto> requestCreate(long userId, ItemRequestDto requestDto) {
+    public ItemRequestDto requestCreate(long userId, ItemRequestDto requestDto) {
         User user = checkUser(userId);
         ItemRequest itemRequest = ItemRequestMapper.INSTANCE.dtoToModel(requestDto);
         itemRequest.setCreated(LocalDateTime.now());
@@ -39,41 +37,35 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         requestRepository.save(itemRequest);
         log.info("create request: {}", itemRequest.getId());
-        return new ResponseEntity<>(ItemRequestMapper.INSTANCE.modelToDto(itemRequest),
-                HttpStatus.OK);
+        return ItemRequestMapper.INSTANCE.modelToDto(itemRequest);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<ItemRequestDtoResponse>> getRequestByUser(long userId) {
+    public List<ItemRequestDtoResponse> getRequestByUser(long userId) {
         checkUser(userId);
         List<ItemRequest> itemRequestList = requestRepository.getItemRequestByCreatorIdOrderByCreated(userId);
-        return new ResponseEntity<>(ItemRequestMapper.INSTANCE.modelListToResponseDtoList(itemRequestList),
-                HttpStatus.OK);
+        return ItemRequestMapper.INSTANCE.modelListToResponseDtoList(itemRequestList);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<List<ItemRequestDtoResponse>> getAllRequests(long userId, int from, int size) {
+    public List<ItemRequestDtoResponse> getAllRequests(long userId, int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "created");
         Pageable page = PageRequest.of(from, size, sortByStart);
-        Page<ItemRequest> requestPage = requestRepository.findItemRequestsNotCreatedByUserId(userId,page);
-        return new ResponseEntity<>(
-                requestPage.stream()
-                        .map(ItemRequestMapper.INSTANCE::modelToResponseDto)
-                        .collect(Collectors.toList()), HttpStatus.OK);
+        Page<ItemRequest> requestPage = requestRepository.findItemRequestsNotCreatedByUserId(userId, page);
+        return requestPage.stream()
+                .map(ItemRequestMapper.INSTANCE::modelToResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
-    public ResponseEntity<ItemRequestDtoResponse> getRequestById(long userId, long requestId) {
+    public ItemRequestDtoResponse getRequestById(long userId, long requestId) {
         checkUser(userId);
-        return new ResponseEntity<>(
-                ItemRequestMapper.INSTANCE.modelToResponseDto(requestRepository.findById(requestId).orElseThrow(() ->
-                        new NotFoundException(String.format("Request ID:%d not found", requestId)))
-                ),
-                HttpStatus.OK);
+        return ItemRequestMapper.INSTANCE.modelToResponseDto(requestRepository.findById(requestId).orElseThrow(() ->
+                new NotFoundException(String.format("Request ID:%d not found", requestId))));
     }
 
     private User checkUser(long userId) {
