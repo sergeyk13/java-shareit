@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.model.Booking;
@@ -28,27 +26,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
 
-    @Mock
-    private BookingRepository bookingRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private ItemRepository itemRepository;
-
-    @InjectMocks
-    private BookingServiceImpl bookingService;
-
     long ownerId = 11L;
     User booker = FactoryEntity.creatRandomUser();
     Item item = FactoryEntity.createRandomItem(ownerId);
-    long bookerId = booker.getId();
     BookingDto bookingDto = FactoryEntity.createRandomBookingDto(item);
-    User owner = FactoryEntity.creatRandomUser();
     Booking booking = FactoryEntity.createRandomBooking(item, booker);
     long bookingId = booking.getId();
+    long bookerId = booker.getId();
+    User owner = FactoryEntity.creatRandomUser();
     boolean approved = false;
+    @Mock
+    private BookingRepository bookingRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ItemRepository itemRepository;
+    @InjectMocks
+    private BookingServiceImpl bookingService;
 
     @BeforeEach
     void setUp() {

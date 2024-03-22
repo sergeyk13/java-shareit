@@ -35,17 +35,17 @@ public class UserClient extends BaseClient {
         return get(path);
     }
 
-    public ResponseEntity<Object> getAll(){
+    public ResponseEntity<Object> getAll() {
         return get("");
     }
 
-    public  ResponseEntity<Object> updateUser(long userId, UserUpdateRequest userUpdateRequest){
+    public ResponseEntity<Object> updateUser(long userId, UserUpdateRequest userUpdateRequest) {
         String path = String.format("/%d", userId);
-        return patch(path,userUpdateRequest);
+        return patch(path, userUpdateRequest);
     }
 
-    public ResponseEntity<Object> removeUser(long userId){
+    public ResponseEntity<Object> removeUser(long userId) {
         String path = String.format("/%d", userId);
-       return delete(path);
+        return delete(path);
     }
 }

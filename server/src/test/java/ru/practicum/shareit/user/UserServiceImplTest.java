@@ -19,18 +19,16 @@ import static org.mockito.Mockito.*;
 
 class UserServiceImplTest {
 
+    User existingUser = new User();
+    long userId = 1L;
     @Mock
     private UserRepository userRepository;
-
     @InjectMocks
     private UserServiceImpl userService;
 
     public UserServiceImplTest() {
         MockitoAnnotations.openMocks(this);
     }
-
-    User existingUser = new User();
-    long userId = 1L;
 
     @BeforeEach
     void setUp() {

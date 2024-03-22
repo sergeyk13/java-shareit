@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -132,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDtoResponse> getBookingByState(long userId, BookingState state,
-                                                                      int from, int size) {
+                                                      int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = MyPageRequest.of(from, size, sortByStart);
@@ -144,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional(readOnly = true)
     @Override
     public List<BookingDtoResponse> getBookingForOwnerByState(long userId, BookingState state,
-                                                                              int from, int size) {
+                                                              int from, int size) {
         checkUser(userId);
         Sort sortByStart = Sort.by(Sort.Direction.DESC, "start");
         Pageable pageable = MyPageRequest.of(from, size, sortByStart);
@@ -204,9 +202,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<BookingDtoResponse> getListSortedByState(Page<Booking> bookingsPage,
-                                                                          BookingState state,
-                                                                          int from,
-                                                                          int size) {
+                                                          BookingState state,
+                                                          int from,
+                                                          int size) {
         int elementOnPage = from % size;
         List<Booking> bookings = bookingsPage.stream()
                 .skip(elementOnPage)

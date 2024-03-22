@@ -32,17 +32,17 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAllByUserId(long userId) {
-        return get("",userId);
+        return get("", userId);
     }
 
-    public  ResponseEntity<Object> updateItem(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest){
+    public ResponseEntity<Object> updateItem(long userId, long itemId, ItemUpdatingRequest itemUpdatingRequest) {
         String path = String.format("/%d", itemId);
-        return patch(path,userId,itemUpdatingRequest);
+        return patch(path, userId, itemUpdatingRequest);
     }
 
-    public ResponseEntity<Object> removeItem(long userId, long itemId){
+    public ResponseEntity<Object> removeItem(long userId, long itemId) {
         String path = String.format("/%d", itemId);
-        return delete(path,userId);
+        return delete(path, userId);
     }
 
     public ResponseEntity<Object> searchItems(long userId, String text, Integer from, Integer size) {
@@ -54,9 +54,9 @@ public class ItemClient extends BaseClient {
         return get("/search?text={text}&from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> getItemByIdWithDate(long userId, long itemId){
+    public ResponseEntity<Object> getItemByIdWithDate(long userId, long itemId) {
         String path = String.format("/%d", itemId);
-        return get(path,userId);
+        return get(path, userId);
     }
 
     public ResponseEntity<Object> createComment(long userId, long itemId, CommentDto text) {

@@ -54,7 +54,7 @@ public class ItemRequestController {
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @PathVariable long requestId) {
         log.info("\n________________________________________________");
-        log.info("Get request: {}, by user: {}",requestId, userId);
+        log.info("Get request: {}, by user: {}", requestId, userId);
         return client.getRequestById(userId, requestId);
     }
 }
