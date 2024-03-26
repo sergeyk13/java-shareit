@@ -153,6 +153,6 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", String.valueOf(userId))
                         .content(objectMapper.writeValueAsString(commentDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 }
