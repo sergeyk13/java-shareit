@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.model.UserDtoResponse;
@@ -16,6 +17,7 @@ public class UserController {
     private final UserService service;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDtoResponse userCreate(@RequestBody @Valid UserDto userDto) {
         return service.userCreate(userDto);
     }
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeUser(@PathVariable long userId) {
         service.removeUser(userId);
     }

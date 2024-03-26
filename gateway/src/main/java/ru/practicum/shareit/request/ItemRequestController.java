@@ -26,7 +26,6 @@ public class ItemRequestController {
     public ResponseEntity<Object> requestCreate(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestBody @Valid ItemRequestDto requestDto) {
-        log.info("\n________________________________________________");
         log.info("Create request from user {}, Request {}", userId, requestDto);
         return client.requestCreate(userId, requestDto);
     }
@@ -34,7 +33,6 @@ public class ItemRequestController {
     @GetMapping
     public ResponseEntity<Object> getRequestByUser(
             @RequestHeader(X_SHARER_USER_ID) long userId) {
-        log.info("\n________________________________________________");
         log.info("Get request by user: {}", userId);
         return client.getRequestByUser(userId);
     }
@@ -44,7 +42,6 @@ public class ItemRequestController {
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-        log.info("\n________________________________________________");
         log.info("Get all request,by user: {}", userId);
         return client.getAllRequests(userId, from, size);
     }
@@ -53,7 +50,6 @@ public class ItemRequestController {
     public ResponseEntity<Object> getRequestById(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @PathVariable long requestId) {
-        log.info("\n________________________________________________");
         log.info("Get request: {}, by user: {}", requestId, userId);
         return client.getRequestById(userId, requestId);
     }

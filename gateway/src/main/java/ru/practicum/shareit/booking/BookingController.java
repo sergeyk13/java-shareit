@@ -43,10 +43,9 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> bookingApprove(
-            @RequestHeader(X_SHARER_USER_ID) long userId,
-            @PathVariable long bookingId,
-            @RequestParam boolean approved) {
+    public ResponseEntity<Object> bookingApprove(@RequestHeader(X_SHARER_USER_ID) long userId,
+                                                 @PathVariable long bookingId,
+                                                 @RequestParam boolean approved) {
         log.info("Set approve={} by booking:{} , from user:{}", approved, bookingId, userId);
         return bookingClient.bookingApprove(userId, bookingId, approved);
     }
